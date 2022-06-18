@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ssafy.happyhouse.model.mapper.QnAMapper">
+	<!-- QnA -->
+	<insert id="insertQnA" parameterType="NoticeDto">
+		insert into notice(title, contents, userid, regdate, type)
+		values(#{title}, #{contents}, #{userid}, now(), "qna")
+	</insert>
+	
+	<update id="updateQnA" parameterType="NoticeDto">
+		update notice set title=#{title}, contents=#{contents} where no=#{no}
+	</update>
+	
+	<delete id="deleteQnA" parameterType="int">
+		delete from notice where no = #{no}
+	</delete>
+	
+	<select id="listQnA" parameterType="int" resultType="NoticeDto">
+		select *,
+		(select count(*) from answer where n.no = notice_no) as ans_cnt
+		from notice n
+		where n.type = "qna"
+		order by n.regdate desc
+		<if test="limit == 5">
+		limit 5
+		</if>
+	</select>
+	
+	<select id="searchQnA" parameterType="string" resultType="NoticeDto">
+		select *, (select count(*) from answer where n.no = notice_no) as ans_cnt
+		from notice n
+		where n.type = "qna"
+		<if test="type.equals('id')">
+			and n.userid like concat('%',#{word},'%')
+		</if>
+		<if test="type.equals('title')">
+			and n.title like concat('%',#{word},'%')
+		</if>
+		<if test="type.equals('both')">
+			and n.title like concat('%',#{word},'%') or n.contents like concat('%',#{word},'%')
+		</if>
+		order by n.regdate desc
+	</select>
+	
+	<select id="viewQnA" parameterType="int" resultType="NoticeDto">
+		select * from notice
+		where no = #{no}
+	</select>
+
+	<!-- Answer -->
+	<insert id="insertAnswer" parameterType="AnswerDto">
+		insert into answer(content, userid, regdate, notice_no)
+		values(#{content}, #{userid}, now(), #{notice_no})
+	</insert>
+	
+	<update id="updateAnswer" parameterType="AnswerDto">
+		update answer set content = #{content} where no = #{no}
+	</update>
+	
+	<update id="contactAnswer" parameterType="int">
+		update answer set contact = notice_no where no = #{no}
+	</update>
+	
+	<delete id="deleteAnswer" parameterType="int">
+		delete from answer where no = #{no}
+	</delete>
+	
+	<update id="likeAnswer" parameterType="int">
+		update answer set `like` = `like` + 1 where no = #{no}
+	</update>
+	
+	<update id="disLikeAnswer" parameterType="int">
+		update answer set `like` = `like` - 1 where no = #{no}
+	</update>
+	
+	<insert id="insertLikeLog" parameterType="AnswerDto">
+		insert into `answer-like-log`(answer_no, userid)
+		values(#{no}, #{userid})
+	</insert>
+	
+	<insert id="deleteLikeLog" parameterType="AnswerDto">
+		delete from `answer-like-log` 
+		where answer_no = #{no} and userid = #{userid}
+	</insert>
+	
+	<select id="listAnswer" parameterType="int" resultType="AnswerDto">
+		select * from answer
+		where notice_no = #{notice_no}
+		order by `contact` desc, `like` desc
+	</select>
+	
+	<select id="checkContact" parameterType="int" resultType="int">
+		select count(*)
+		from answer
+		where contact = #{notice_no}
+	</select>
+	
+	<select id="checkLike" parameterType="AnswerDto" resultType="int">
+		select count(*)
+		from `answer-like-log`
+		where answer_no = #{no} and userid = #{userid}
+	</select>
+</mapper>

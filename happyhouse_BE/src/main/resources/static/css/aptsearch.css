@@ -1,0 +1,94 @@
+.aptBtn {
+  margin-right: 10px;
+}
+
+.search-result {
+  min-width: 1000px;
+  max-width: 1500px;
+  height: 750px;
+  margin: auto;
+}
+
+.content_left {
+  width: 30%;
+  height: 700px;
+  margin-top: 40px;
+  float: left;
+  overflow: auto;
+}
+
+.content_body {
+  width: 70%;
+  height: 750px;
+  float: right;
+}
+
+.aptlist-top {
+  width: 50%;
+  margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.aptlist {
+  padding: 0px;
+}
+
+.aptlist > ul {
+  /* width: 60%; */
+  min-width: 200px;
+  max-width: 200px;
+  padding-bottom: 10px;
+  border-bottom: 1px rgba(128, 128, 128, 0.356) solid;
+}
+
+.aptitem {
+  display: block;
+  margin-top: 10px;
+  list-style: none;
+}
+
+.aptitem > li {
+  font-weight: bold;
+  font-size: 14px;
+  margin-left: 10px;
+}
+
+.aptitem > li:first-child[name] {
+  margin: 0px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.aptitem > li:last-child {
+  font-weight: lighter;
+  font-size: 14px;
+  color: gray;
+}
+
+#backBtn,
+#info-apt-name {
+  display: none;
+}
+
+#info-apt-name {
+  margin-left: 5px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+#map {
+  margin-top: 30px;
+  border: 1px gray solid;
+}
+
+#delete-like,
+#change-main {
+  margin-left: 10px;
+}
+
+.copyright {
+  clear: both;
+  margin-top: 20px;
+}

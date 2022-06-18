@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.happyhouse.model.mapper.NoticeMapper">
+	
+	<insert id="insertNotice" parameterType="NoticeDto">
+		insert into notice(title, contents, userid, regdate, type)
+		values(#{title}, #{contents}, #{userid}, now(), "notice")
+	</insert>
+	
+	<update id="updateNotice" parameterType="NoticeDto">
+		update notice set title=#{title}, contents=#{contents} where no=#{no}
+	</update>
+	
+	<delete id="deleteNotice" parameterType="NoticeDto">
+		delete from notice where no = #{no}
+	</delete>
+
+	<select id="listNotice" parameterType="ListParameterDto" resultType="NoticeDto">
+		select *
+		from notice
+		where type = "notice"
+		<if test="word != ''">
+			and title like concat('%',#{word},'%')
+		</if>
+		order by no desc limit #{start},#{countPerPage}
+	</select>
+	
+	<select id="getTotalCount" parameterType="ListParameterDto" resultType="int">
+		select count(no)
+		from notice
+		where type = "notice"
+		<if test="word != ''">
+			and title like concat('%',#{word},'%')
+		</if>
+	</select>
+	
+	<select id="searchAll" parameterType="int" resultType="NoticeDto">
+		select *, (select count(*) from reply where n.no = notice_no) as ans_cnt
+		from notice n
+		where n.type = "notice"
+		order by n.regdate desc
+		<if test="limit == 5">
+		limit 5
+		</if>
+	</select>
+	
+	<select id="searchNotice" parameterType="string" resultType="NoticeDto">
+		select *, (select count(*) from reply where n.no = notice_no) as ans_cnt
+		from notice n
+		where n.type = "notice"
+		<if test="type.equals('id')">
+			and n.userid like concat('%',#{word},'%')
+		</if>
+		<if test="type.equals('title')">
+			and n.title like concat('%',#{word},'%')
+		</if>
+		<if test="type.equals('both')">
+			and n.title like concat('%',#{word},'%') or n.contents like concat('%',#{word},'%')
+		</if>
+		order by regdate desc
+	</select>
+	
+	<select id="viewNotice" parameterType="int" resultType="NoticeDto">
+		select * from notice where no = #{no}
+	</select>
+	
+	<!-- 댓글 -->
+	<insert id="insertReply" parameterType="ReplyDto">
+		insert into reply(content, regdate, notice_no, userid)
+		values (#{content}, now(), #{notice_no}, #{userid})
+	</insert>
+	
+	<update id="updateReply" parameterType="ReplyDto">
+		update reply set content = #{content} where no = #{no}
+	</update>
+	
+	<delete id="deleteReply" parameterType="int">
+		delete from reply where no = #{no}
+	</delete>
+	
+	<select id="listReply" parameterType="int" resultType="ReplyDto">
+		select *
+		from reply
+		where notice_no = #{notice_no}
+	</select>
+</mapper>
